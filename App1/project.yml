@@ -1,0 +1,20 @@
+name: App1
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: 14.0
+
+packages:
+  MonoCore:
+    path: ../MonoCore
+
+targets:
+  App1:
+    type: application
+    platform: iOS
+    sources: [Sources]
+    dependencies:
+      - package: MonoCore
+    settings:
+      base:
+        INFOPLIST_FILE: Sources/Info.plist

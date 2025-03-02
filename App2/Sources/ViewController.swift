@@ -8,7 +8,7 @@ class ViewController: UIViewController {
         
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "App2: \(MonoCore.getSharedMessage())"
+        label.text = "App2 Updated: \(MonoCore.getSharedMessage())"
         label.textColor = .systemBlue
         view.addSubview(label)
         

@@ -1,0 +1,28 @@
+# Ruby related
+**/vendor/bundle
+**/.bundle
+*.gem
+**/Gemfile.lock
+
+# Ruby environment
+.ruby-version
+.ruby-gemset
+
+# Fastlane specific
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+**/fastlane/README.md
+
+# macOS specific
+.DS_Store
+**/.DS_Store
+
+# Xcode
+**/xcuserdata/
+**/*.xcodeproj/*
+!**/*.xcodeproj/project.pbxproj
+!**/*.xcodeproj/xcshareddata/
+!**/*.xcworkspace/contents.xcworkspacedata
+**/*.xcworkspace/xcuserdata/

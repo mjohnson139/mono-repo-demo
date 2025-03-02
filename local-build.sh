@@ -20,10 +20,21 @@ generate_project() {
     cd "$ROOT_DIR/$app_dir" && xcodegen generate
 }
 
+# Check if xcpretty is installed
+check_xcpretty() {
+    if ! command -v xcpretty &> /dev/null; then
+        echo "xcpretty is not installed. Installing xcpretty..."
+        gem install xcpretty
+    fi
+}
+
 echo "Checking for changes..."
 check_directory_changes "App1"
 check_directory_changes "App2"
 check_directory_changes "MonoCore"
+
+# Make sure xcpretty is available
+check_xcpretty
 
 # Build MonoCore if changed
 if [ "$HAS_CHANGES_MonoCore" = true ]; then
@@ -38,7 +49,7 @@ fi
 if [ "$HAS_CHANGES_App1" = true ] || [ "$HAS_CHANGES_MonoCore" = true ]; then
     echo "Building App1..."
     generate_project "App1"
-    cd "$ROOT_DIR/App1" && ./build.sh
+    cd "$ROOT_DIR/App1" && ./build.sh | xcpretty
     cd "$ROOT_DIR"
 else
     echo "No changes affecting App1, skipping build"
@@ -48,7 +59,7 @@ fi
 if [ "$HAS_CHANGES_App2" = true ] || [ "$HAS_CHANGES_MonoCore" = true ]; then
     echo "Building App2..."
     generate_project "App2"
-    cd "$ROOT_DIR/App2" && ./build.sh
+    cd "$ROOT_DIR/App2" && ./build.sh | xcpretty
     cd "$ROOT_DIR"
 else
     echo "No changes affecting App2, skipping build"

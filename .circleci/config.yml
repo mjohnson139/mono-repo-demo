@@ -25,22 +25,18 @@ jobs:
       xcode: "14.3.1"
     steps:
       - checkout
-      - ruby/install-deps:
-          app-dir: App1
       - run:
           name: Build App1
-          command: cd App1 && bundle exec fastlane build
+          command: ./App1/build.sh
 
   build-app2:
     macos:
       xcode: "14.3.1"
     steps:
       - checkout
-      - ruby/install-deps:
-          app-dir: App2
       - run:
           name: Build App2
-          command: cd App2 && bundle exec fastlane build
+          command: ./App2/build.sh
 
   build-monocore:
     macos:

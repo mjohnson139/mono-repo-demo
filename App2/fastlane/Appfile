@@ -1,0 +1,2 @@
+app_identifier("com.example.App2") # The bundle identifier of your app
+apple_id("your@email.com")  # Your Apple Developer Portal username

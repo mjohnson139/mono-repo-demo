@@ -1,0 +1,26 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build the app"
+  lane :build do
+    xcodebuild(
+      project: "App2.xcodeproj",
+      scheme: "App2",
+      clean: true,
+      build: true,
+      configuration: "Debug",
+      destination: "platform=iOS Simulator,name=iPhone 15,OS=17.4"
+    )
+  end
+
+  desc "Run tests"
+  lane :test do
+    xcodebuild(
+      project: "App2.xcodeproj",
+      scheme: "App2",
+      configuration: "Debug",
+      destination: "platform=iOS Simulator,name=iPhone 15,OS=17.4",
+      test: true
+    )
+  end
+end

@@ -1,0 +1,71 @@
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@2.0
+
+commands:
+  check_directory_changes:
+    description: "Check if changes exist in specified directory"
+    parameters:
+      directory:
+        type: string
+    steps:
+      - run:
+          name: Check for changes in << parameters.directory >>
+          command: |
+            if [ -n "$(git diff origin/main... --name-only << parameters.directory >>)" ]; then
+              echo "export HAS_CHANGES_<< parameters.directory >>='true'" >> $BASH_ENV
+            else
+              echo "export HAS_CHANGES_<< parameters.directory >>='false'" >> $BASH_ENV
+            fi
+
+jobs:
+  build-app1:
+    macos:
+      xcode: "14.3.1"
+    steps:
+      - checkout
+      - ruby/install-deps:
+          app-dir: App1
+      - run:
+          name: Build App1
+          command: cd App1 && bundle exec fastlane build
+
+  build-app2:
+    macos:
+      xcode: "14.3.1"
+    steps:
+      - checkout
+      - ruby/install-deps:
+          app-dir: App2
+      - run:
+          name: Build App2
+          command: cd App2 && bundle exec fastlane build
+
+  build-monocore:
+    macos:
+      xcode: "14.3.1"
+    steps:
+      - checkout
+      - run:
+          name: Build MonoCore
+          command: cd MonoCore && swift build
+
+workflows:
+  version: 2
+  build-all:
+    jobs:
+      - build-app1:
+          filters:
+            paths:
+              - App1/**/*
+              - MonoCore/**/*
+      - build-app2:
+          filters:
+            paths:
+              - App2/**/*
+              - MonoCore/**/*
+      - build-monocore:
+          filters:
+            paths:
+              - MonoCore/**/*

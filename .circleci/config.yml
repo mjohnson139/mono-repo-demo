@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  ruby: circleci/ruby@2.0
-
 commands:
   check_directory_changes:
     description: "Check if changes exist in specified directory"
@@ -20,48 +17,90 @@ commands:
             fi
 
 jobs:
+  check-changes:
+    macos:
+      xcode: "14.3.1"
+    steps:
+      - checkout
+      - check_directory_changes:
+          directory: "App1"
+      - check_directory_changes:
+          directory: "App2"
+      - check_directory_changes:
+          directory: "MonoCore"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .bash_env
+
   build-app1:
     macos:
       xcode: "14.3.1"
     steps:
       - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load environment variables
+          command: cat .bash_env >> $BASH_ENV
       - run:
           name: Build App1
-          command: ./App1/build.sh
+          command: |
+            if [[ "$HAS_CHANGES_App1" == "true" || "$HAS_CHANGES_MonoCore" == "true" ]]; then
+              ./App1/build.sh
+            else
+              echo "No changes affecting App1, skipping build"
+            fi
 
   build-app2:
     macos:
       xcode: "14.3.1"
     steps:
       - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load environment variables
+          command: cat .bash_env >> $BASH_ENV
       - run:
           name: Build App2
-          command: ./App2/build.sh
+          command: |
+            if [[ "$HAS_CHANGES_App2" == "true" || "$HAS_CHANGES_MonoCore" == "true" ]]; then
+              ./App2/build.sh
+            else
+              echo "No changes affecting App2, skipping build"
+            fi
 
   build-monocore:
     macos:
       xcode: "14.3.1"
     steps:
       - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load environment variables
+          command: cat .bash_env >> $BASH_ENV
       - run:
           name: Build MonoCore
-          command: cd MonoCore && swift build
+          command: |
+            if [[ "$HAS_CHANGES_MonoCore" == "true" ]]; then
+              cd MonoCore && swift build
+            else
+              echo "No changes in MonoCore, skipping build"
+            fi
 
 workflows:
   version: 2
   build-all:
     jobs:
+      - check-changes
       - build-app1:
-          filters:
-            paths:
-              - App1/**/*
-              - MonoCore/**/*
+          requires:
+            - check-changes
       - build-app2:
-          filters:
-            paths:
-              - App2/**/*
-              - MonoCore/**/*
+          requires:
+            - check-changes
       - build-monocore:
-          filters:
-            paths:
-              - MonoCore/**/*
+          requires:
+            - check-changes

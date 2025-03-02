@@ -26,3 +26,11 @@
 !**/*.xcodeproj/xcshareddata/
 !**/*.xcworkspace/contents.xcworkspacedata
 **/*.xcworkspace/xcuserdata/
+
+# XCode user specific files
+**/*.xcodeproj/project.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+**/*.xcworkspace/xcuserdata/
+
+# Local XCode settings
+**/*.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings

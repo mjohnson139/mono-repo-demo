@@ -8,7 +8,7 @@ class ViewController: UIViewController {
         
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "App1: \(MonoCore.getSharedMessage())"
+        label.text = "App1 Updated: \(MonoCore.getSharedMessage())"
         view.addSubview(label)
         
         NSLayoutConstraint.activate([

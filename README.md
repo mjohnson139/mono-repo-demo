@@ -12,9 +12,12 @@ This repository is a monorepo containing multiple applications and a core librar
 
 To build the projects locally, follow these steps:
 
-1. **Set up GitHub post-commit hooks**: Ensure you have the necessary post-commit hooks set up in your GitHub repository.
-2. **Install CircleCI**: Follow the instructions on the CircleCI website to install CircleCI on your machine.
-3. **Install Xcode**: Make sure you have the latest version of Xcode installed, along with the Xcode build tools.
+1. **Install XcodeGen**: `brew install xcodegen`
+2. **Set up GitHub post-commit hooks**: Ensure you have the necessary post-commit hooks set up in your GitHub repository.
+   - Make the hook executable: `chmod +x .git/hooks/post-commit`
+3. **Install CircleCI**: Follow the instructions on the CircleCI website to install CircleCI on your machine.
+4. **Install Xcode**: Make sure you have the latest version of Xcode installed, along with the Xcode build tools.
+5. **Install xcpretty**: `gem install xcpretty`
 
 ## Post-Commit Hook Example
 

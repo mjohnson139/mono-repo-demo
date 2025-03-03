@@ -18,75 +18,31 @@ To build the projects locally, follow these steps:
 
 ## Post-Commit Hook Example
 
-Here is an example of a post-commit hook script (`local-build.sh`) that we use locally:
+Here is an example of a post-commit hook script (`.git/hooks/post-commit`) that we use locally:
 
-```bash
-#!/bin/bash
-# Store the root directory
-ROOT_DIR=$(pwd)
-
-# Check for changes in each directory
-check_directory_changes() {
-    local directory=$1
-    if [ -n "$(git diff HEAD~1 --name-only $directory)" ]; then
-        eval "HAS_CHANGES_$directory=true"
-    else
-        eval "HAS_CHANGES_$directory=false"
-    fi
-}
-
-# Generate Xcode project for an app
-generate_project() {
-    local app_dir=$1
-    echo "Generating Xcode project for $app_dir..."
-    cd "$ROOT_DIR/$app_dir" && xcodegen generate
-}
-
-# Check if xcpretty is installed
-check_xcpretty() {
-    if ! command -v xcpretty &> /dev/null; then
-        echo "xcpretty is not installed. Installing xcpretty..."
-        gem install xcpretty
-    fi
-}
-
-# Check for changes
-check_directory_changes "App1"
-check_directory_changes "App2"
-check_directory_changes "MonoCore"
-
-# Make sure xcpretty is available
-check_xcpretty
-
-# Build MonoCore if changed
-if [ "$HAS_CHANGES_MonoCore" = true ]; then
-    echo "Building MonoCore..."
-    cd "$ROOT_DIR/MonoCore" && swift build
-    cd "$ROOT_DIR"
-else
-    echo "No changes in MonoCore, skipping build"
-fi
-
-# Build App1 if it or MonoCore changed
-if [ "$HAS_CHANGES_App1" = true ] || [ "$HAS_CHANGES_MonoCore" = true ]; then
-    echo "Building App1..."
-    generate_project "App1"
-    cd "$ROOT_DIR/App1" && ./build.sh | xcpretty
-    cd "$ROOT_DIR"
-else
-    echo "No changes affecting App1, skipping build"
-fi
-
-# Build App2 if it or MonoCore changed
-if [ "$HAS_CHANGES_App2" = true ] || [ "$HAS_CHANGES_MonoCore" = true ]; then
-    echo "Building App2..."
-    generate_project "App2"
-    cd "$ROOT_DIR/App2" && ./build.sh | xcpretty
-    cd "$ROOT_DIR"
-else
-    echo "No changes affecting App2, skipping build"
-fi
 ```
+#!/bin/bash
+
+# Allow skipping the build check with an environment variable
+if [ "$SKIP_BUILD_CHECK" = "1" ]; then
+  echo "⚠️  Skipping build check (SKIP_BUILD_CHECK=1)"
+  exit 0
+fi
+
+echo "Running post-commit build to verify changes..."
+
+# Run the local build script
+./local-build.sh
+BUILD_RESULT=$?
+
+# Report build status but don't affect the commit (which is already done)
+if [ $BUILD_RESULT -ne 0 ]; then
+  echo "❌ Build failed! Your commit was saved, but there may be issues to fix."
+else
+  echo "✅ Build succeeded. All changes verify successfully."
+fi
+
+exit 0  # Always exit with success since we don't want to interfere with the commit```
 
 ## CircleCI
 
